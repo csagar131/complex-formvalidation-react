@@ -1,25 +1,29 @@
 import { useState } from "react";
 
 const SimpleInput = (props) => {
+  const [enteredName, setEnteredName] = useState("");
+  const [hasStartedEnteringName, setHasStartedEnteringName] = useState(false);
   
 
-  const [enteredName, setEnteredName] = useState("");
-  const [hasStartedEnteringName, setHasStartedEnteringName] = useState(false)
+  const isEnteredNameValid = enteredName.trim().length !== 0;
 
-  const isEnteredNameValid = enteredName.trim().length !== 0
+  let isFormValid = false;
 
+  if (isEnteredNameValid) {
+    isFormValid = true;
+  }
 
   const nameInputChangeHandler = (e) => {
     setEnteredName(e.target.value);
   };
 
   const handleOnFocusOut = (e) => {
-      setHasStartedEnteringName(true)
-  }
+    setHasStartedEnteringName(true);
+  };
 
   const formSubmitHandler = (e) => {
     e.preventDefault();
-    setHasStartedEnteringName(true)
+    setHasStartedEnteringName(true);
   };
 
   return (
@@ -33,10 +37,12 @@ const SimpleInput = (props) => {
           value={enteredName}
           onBlur={handleOnFocusOut}
         />
-        {!isEnteredNameValid && hasStartedEnteringName && <p className="error-text">Name must not be emtpy...</p>}
+        {!isEnteredNameValid && hasStartedEnteringName && (
+          <p className="error-text">Name must not be emtpy...</p>
+        )}
       </div>
       <div className="form-actions">
-        <button >Submit</button>
+        <button disabled={!isFormValid}>Submit</button>
       </div>
     </form>
   );
