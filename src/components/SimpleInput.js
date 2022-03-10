@@ -1,52 +1,39 @@
-import { useState } from "react";
+import useInputValidate from "../hooks/input-validate-hook";
 
 const SimpleInput = () => {
-  const [isNameInputTouched, setIsNameInputTouched] = useState(false);
-  const [isEmailInputTouched, setIsEmailInputTouched] = useState(false)
+  const {
+    value: enteredName,
+    isEnteredValueValid: isEnteredNameValid,
+    inputChangeHandler : nameInputChangeHandler,
+    handleOnBlurInput : handleOnBlurName,
+    setIsTouched : setIsNameInputTouched,
+    isTouched : isNameInputTouched
+  } = useInputValidate((value) => value.trim().length !== 0);
 
-  const [enteredInput, setEnteredInput] = useState({
-    name : '',
-    email : ''
-  })
-  
-
-  const isEnteredNameValid = enteredInput.name.trim().length !== 0;
-  const isEnteredEmailValid = String(enteredInput.email)
-  .toLowerCase()
-  .match(
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-  )
+  //   const checkValid = (enteredValue) => {
+  //     if(enteredValue.name.trim().length !== 0 && String(enteredInput.email)
+  //     .toLowerCase()
+  //     .match(
+  //       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  //     )){
+  //       return true
+  //     }
+  //     return false
+  //   }
 
   let isFormValid = false;
 
-
-  if (isEnteredNameValid && isEnteredEmailValid  ) {
+  if (isEnteredNameValid) {
     isFormValid = true;
   }
 
-  const inputChangeHandler = (e) => {
-    setEnteredInput(
-      {
-        ...enteredInput,
-        [e.target.name] : e.target.value
-      }
-    )
-  };
-
-  const handleOnFocusOutName = () => {
-    setIsNameInputTouched(true);
-    
-  };
-
-  const handleOnFocusOutEmail = () => {
-    setIsEmailInputTouched(true)
-  }
 
   const formSubmitHandler = (e) => {
     e.preventDefault();
-    setIsNameInputTouched(true);
     setIsNameInputTouched(true)
   };
+
+  console.log()
 
   return (
     <form onSubmit={formSubmitHandler}>
@@ -55,16 +42,16 @@ const SimpleInput = () => {
         <input
           type="text"
           id="name"
-          onChange={inputChangeHandler}
-          value={enteredInput.name}
-          name='name'
-          onBlur={handleOnFocusOutName}
+          onChange={nameInputChangeHandler}
+          value={enteredName}
+          name="name"
+          onBlur={handleOnBlurName}
         />
         {!isEnteredNameValid && isNameInputTouched && (
           <p className="error-text">Name must not be emtpy...</p>
         )}
       </div>
-      <div className="form-control">
+      {/* <div className="form-control">
         <label htmlFor="name">Your Email</label>
         <input
           type="email"
@@ -77,7 +64,7 @@ const SimpleInput = () => {
         {!isEnteredEmailValid && isEmailInputTouched &&
           <p className="error-text">Pleas enter valid email...</p>
         }
-      </div>
+      </div> */}
       <div className="form-actions">
         <button disabled={!isFormValid}>Submit</button>
       </div>
