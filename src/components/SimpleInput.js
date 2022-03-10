@@ -3,25 +3,23 @@ import useInputValidate from "../hooks/input-validate-hook";
 const SimpleInput = () => {
   const {
     value: enteredName,
+    isTouched: isNameInputTouched,
+    enterInputStateDispatch: enterNameInputDispatch,
     isEnteredValueValid: isEnteredNameValid,
-    inputChangeHandler : nameInputChangeHandler,
-    handleOnBlurInput : handleOnBlurName,
-    setIsTouched : setIsNameInputTouched,
-    isTouched : isNameInputTouched
   } = useInputValidate((value) => value.trim().length !== 0);
 
   const {
     value: enteredEmail,
+    isTouched: isEmailInputTouched,
+    enterInputStateDispatch: enterEmailInputDispatch,
     isEnteredValueValid: isEnteredEmailValid,
-    inputChangeHandler : emailInputChangeHandler,
-    handleOnBlurInput : handleOnBlurEmail,
-    setIsTouched : setIsEmailInputTouched,
-    isTouched : isEmailInputTouched
-  } = useInputValidate((value) => String(value)
-  .toLowerCase()
-  .match(
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-  ));
+  } = useInputValidate((value) =>
+    String(value)
+      .toLowerCase()
+      .match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      )
+  );
 
   let isFormValid = false;
 
@@ -29,11 +27,8 @@ const SimpleInput = () => {
     isFormValid = true;
   }
 
-
   const formSubmitHandler = (e) => {
     e.preventDefault();
-    setIsNameInputTouched(true)
-    setIsEmailInputTouched(true)
   };
 
   return (
@@ -43,10 +38,17 @@ const SimpleInput = () => {
         <input
           type="text"
           id="name"
-          onChange={nameInputChangeHandler}
+          onChange={(e) => {
+            enterNameInputDispatch({
+              type: "onChange",
+              value: e.target.value,
+            });
+          }}
           value={enteredName}
           name="name"
-          onBlur={handleOnBlurName}
+          onBlur={() =>enterNameInputDispatch({
+            type: "onBlur",
+          })}
         />
         {!isEnteredNameValid && isNameInputTouched && (
           <p className="error-text">Name must not be emtpy...</p>
@@ -59,12 +61,19 @@ const SimpleInput = () => {
           id="email"
           name="email"
           value={enteredEmail}
-          onChange={emailInputChangeHandler}
-          onBlur={handleOnBlurEmail}
+          onChange={(e) =>
+            enterEmailInputDispatch({
+              type: "onChange",
+              value: e.target.value,
+            })
+          }
+          onBlur={() =>enterEmailInputDispatch({
+            type: "onBlur",
+          })}
         />
-        {!isEnteredEmailValid && isEmailInputTouched &&
+        {!isEnteredEmailValid && isEmailInputTouched && (
           <p className="error-text">Pleas enter valid email...</p>
-        }
+        )}
       </div>
       <div className="form-actions">
         <button disabled={!isFormValid}>Submit</button>
